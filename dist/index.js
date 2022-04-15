@@ -123,11 +123,13 @@ const axios_1 = __importDefault(__nccwpck_require__(6545));
  * @param uri telegram api to send request to.
  */
 const sendMessage = (chatId, message, uri) => {
-    return axios_1.default.post(uri, {
+    const response = axios_1.default.post(uri, {
         chat_id: chatId,
         text: message,
         parse_mode: "Markdownv2",
     });
+    console.log(response);
+    return response;
 };
 exports["default"] = sendMessage;
 

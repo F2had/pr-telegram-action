@@ -11,7 +11,8 @@ const sendMessage = (
   message: string,
   uri: string,
 ) => {
-  return axios.post(
+
+  const response =  axios.post(
     uri,
     {
       chat_id: chatId,
@@ -19,6 +20,9 @@ const sendMessage = (
       parse_mode: "Markdownv2",
     },
   );
+  console.log(response);
+  return response;
+  
 };
 
 export default sendMessage;
