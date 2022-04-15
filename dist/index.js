@@ -85,6 +85,7 @@ const formatMessage = (payload) => {
       *By:* [${sender.login}](https://github.com/${sender.login})
       [View Pull Request](https://github.com/${owner.login}/${name}/pull/${number})
       `;
+            console.log(message);
             return message;
         case "review_requested":
             const { requested_reviewer } = payload;
@@ -96,6 +97,7 @@ const formatMessage = (payload) => {
       *For:* [${reviewer}](https://github.com/${reviewer})
       [View Request](https://github.com/${owner.login}/${name}/pull/${number})
       `;
+            console.log(message);
             return message;
         default:
             throw new Error(`Unsupported action: ${action}`);
