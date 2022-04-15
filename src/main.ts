@@ -37,29 +37,34 @@ const formatMessage = (payload: PullRequestEvent): string => {
   const { name, owner } = repository;
   const { title } = pull_request;
   let message = "";
+  const prTitle = escapeMarkdown(title);
+  const ownerName = escapeMarkdown(owner.login);
+  const repoName = escapeMarkdown(name);
+  const senderName = escapeMarkdown(sender.login);
 
   // replace if with switch statement
   switch (action) {
     case "opened":
-      message = `🔄 *Pull Request* \\#${number}
-      On [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number})
-      *Title:* ${title}
-      *By:* [${sender.login}](https://github.com/${sender.login})
-      [View Pull Request](https://github.com/${owner.login}/${name}/pull/${number})
+      message = `🔄 *Pull Request* \\\#${number}
+      On [${ownerName}/${repoName}](https://github.com/${ownerName}/${repoName}/pull/${number})
+      *Title:* ${prTitle}
+      *By:* [${senderName}](https://github.com/${sender.login})
+      [View Pull Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
       console.log(message);
-      
+
       return message;
 
     case "review_requested":
       const { requested_reviewer } = payload;
       const { login: reviewer } = requested_reviewer;
+      const reviewerName = escapeMarkdown(reviewer);
       message = `📝  *Review Request* 
-      On \\#${number} [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number}) 
-      *Title:* ${title}
-      *By:* [${sender.login}](
-      *For:* [${reviewer}](https://github.com/${reviewer})
-      [View Request](https://github.com/${owner.login}/${name}/pull/${number})
+      On \\\#${number} [${ownerName}/${repoName}]\(https://github.com/${ownerName}/${repoName}/pull/${number}\) 
+      *Title:* ${prTitle}
+      *By:* [${senderName}](
+      *For:* [${reviewerName}](https://github.com/${reviewerName})
+      [View Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
       console.log(message);
       return message;
@@ -67,5 +72,9 @@ const formatMessage = (payload: PullRequestEvent): string => {
       throw new Error(`Unsupported action: ${action}`);
   }
 };
+
+function escapeMarkdown(text: string): string {
+  return text.replace(/([_*\[\]()~`>#+-=|{}\.!])/g, "\\$1");
+}
 
 run();
