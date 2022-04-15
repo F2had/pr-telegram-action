@@ -59,7 +59,6 @@ function run() {
             }
             const uri = `https://api.telegram.org/bot${botToken}/sendMessage`;
             const message = formatMessage(payload);
-            // console.log(`Sending message: payload=${JSON.stringify(payload)}`);
             yield (0, sendMessage_1.default)(chatId, message, uri);
             core.debug(`Message sent!`);
             core.setOutput("Finshed time", new Date().toTimeString());
@@ -75,22 +74,28 @@ function run() {
 const formatMessage = (payload) => {
     const { action, pull_request, repository, sender, number } = payload;
     const { name, owner } = repository;
-    const { login } = sender;
     const { title } = pull_request;
     let message = "";
     // replace if with switch statement
     switch (action) {
         case "opened":
-            message =
-                `*${login}* opened a new pull request #${number} on ${owner.login}/${name}: ${title}`;
-            console.log(message);
+            message = `🔄 *Pull Request* \\#${number}
+      On [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number})
+      *Title:* ${title}
+      *By:* [${sender.login}](https://github.com/${sender.login})
+      [View Pull Request](https://github.com/${owner.login}/${name}/pull/${number})
+      `;
             return message;
         case "review_requested":
             const { requested_reviewer } = payload;
             const { login: reviewer } = requested_reviewer;
-            message =
-                `*${sender.login}* requested review from ${reviewer} on pull request #${pull_request.number} on ${owner.login}/${name}: ${title}`;
-            console.log(message);
+            message = `📝  *Review Request* 
+      On \\#${number} [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number}) 
+      *Title:* ${title}
+      *By:* [${sender.login}](
+      *For:* [${reviewer}](https://github.com/${reviewer})
+      [View Request](https://github.com/${owner.login}/${name}/pull/${number})
+      `;
             return message;
         default:
             throw new Error(`Unsupported action: ${action}`);
@@ -114,15 +119,14 @@ const axios_1 = __importDefault(__nccwpck_require__(6545));
 /**
  * Send a Telegram message on pull request event.
  * @param chatId id of targeted chat gorup or channel.
- * @param message the message to be send.
+ * @param message the message to be sent.
  * @param uri telegram api to send request to.
  */
 const sendMessage = (chatId, message, uri) => {
-    console.log(`Sending message: payload=${JSON.stringify(message)}`);
     return axios_1.default.post(uri, {
         chat_id: chatId,
         text: message,
-        parse_mode: "Markdown",
+        parse_mode: "Markdownv2",
     });
 };
 exports["default"] = sendMessage;

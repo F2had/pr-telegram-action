@@ -16,7 +16,7 @@ const sendMessage = (
     {
       chat_id: chatId,
       text: message,
-      parse_mode: "Markdown",
+      parse_mode: "Markdownv2",
     },
   );
 };

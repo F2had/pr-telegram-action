@@ -35,22 +35,30 @@ async function run(): Promise<void> {
 const formatMessage = (payload: PullRequestEvent): string => {
   const { action, pull_request, repository, sender, number } = payload;
   const { name, owner } = repository;
-  const { login } = sender;
   const { title } = pull_request;
   let message = "";
 
   // replace if with switch statement
   switch (action) {
     case "opened":
-      message =
-        `*${login}* opened a new pull request #${number} on ${owner.login}/${name}: ${title}`;
+      message = `🔄 *Pull Request* \\#${number}
+      On [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number})
+      *Title:* ${title}
+      *By:* [${sender.login}](https://github.com/${sender.login})
+      [View Pull Request](https://github.com/${owner.login}/${name}/pull/${number})
+      `;
       return message;
 
     case "review_requested":
       const { requested_reviewer } = payload;
       const { login: reviewer } = requested_reviewer;
-      message =
-        `*${sender.login}* requested review from ${reviewer} on pull request #${pull_request.number} on ${owner.login}/${name}: ${title}`;
+      message = `📝  *Review Request* 
+      On \\#${number} [${owner.login}/${name}](https://github.com/${owner.login}/${name}/pull/${number}) 
+      *Title:* ${title}
+      *By:* [${sender.login}](
+      *For:* [${reviewer}](https://github.com/${reviewer})
+      [View Request](https://github.com/${owner.login}/${name}/pull/${number})
+      `;
       return message;
     default:
       throw new Error(`Unsupported action: ${action}`);
