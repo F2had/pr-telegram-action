@@ -1,0 +1,16 @@
+name: 'Pull Request Telegram'
+description: 'Sends a message to a Telegram channel when a pull request is opened or pull request review is requested.'
+author: 'F2had'
+inputs:
+  chat_id:
+    required: true
+    description: 'Telegram chat ID'
+  bot_token:
+    required: true
+    description: 'Telegram bot token'
+branding:
+  icon: 'send'
+  color: 'gray-dark'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
