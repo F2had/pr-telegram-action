@@ -48,14 +48,14 @@ const sendMessage_1 = __importDefault(__nccwpck_require__(5203));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let botToken = core.getInput("bot_token");
-            let chatId = core.getInput("chat_id");
+            const botToken = core.getInput("bot_token");
+            const chatId = core.getInput("chat_id");
             if (github.context.eventName !== "pull_request") {
                 throw new Error("This action only works on pull_request events");
             }
             const payload = github.context.payload;
             if (!botToken || !chatId) {
-                throw new Error("bot-token and chat-id are required");
+                throw new Error("bot_token and chat_id are required");
             }
             const uri = `https://api.telegram.org/bot${botToken}/sendMessage`;
             const message = formatMessage(payload);
@@ -70,7 +70,6 @@ function run() {
     });
 }
 // Format the message based on the event type, new pull or review request.
-// TODO: create a better markdown message
 const formatMessage = (payload) => {
     const { action, pull_request, repository, sender, number } = payload;
     const { name, owner } = repository;
@@ -80,7 +79,6 @@ const formatMessage = (payload) => {
     const ownerName = escapeMarkdown(owner.login);
     const repoName = escapeMarkdown(name);
     const senderName = escapeMarkdown(sender.login);
-    // replace if with switch statement
     switch (action) {
         case "opened":
             message = `🔄 *Pull Request* \\\#${number}
@@ -89,7 +87,7 @@ const formatMessage = (payload) => {
       *By:* [${senderName}](https://github.com/${senderName})
       [View Pull Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-            console.debug(message);
+            console.debug("Message: ", message);
             return message;
         case "review_requested":
             const { requested_reviewer } = payload;
@@ -102,13 +100,16 @@ const formatMessage = (payload) => {
       *For:* [${reviewerName}](https://github.com/${reviewerName})
       [View Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-            console.debug(message);
+            console.debug("Message: ", message);
             return message;
         default:
             throw new Error(`Unsupported action: ${action}`);
     }
 };
-// Escape markdown characters based on https://core.telegram.org/bots/api#markdownv2-style
+/*Escape markdown characters based on
+  https://core.telegram.org/bots/api#markdownv2-style
+  ignore pre and code entities as we do not use.
+*/
 const escapeMarkdown = (text) => {
     return text.replace(/([_*\[\]()~`>#+-=|{}\.!])/g, "\\$1");
 };
