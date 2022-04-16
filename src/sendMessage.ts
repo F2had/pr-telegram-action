@@ -6,13 +6,12 @@ import axios from "axios";
  * @param message the message to be sent.
  * @param uri telegram api to send request to.
  */
-const sendMessage = async (
+const sendMessage = (
   chatId: string,
   message: string,
   uri: string,
 ) => {
-
-  const response =  await axios.post(
+  return axios.post(
     uri,
     {
       chat_id: chatId,
@@ -20,9 +19,6 @@ const sendMessage = async (
       parse_mode: "Markdownv2",
     },
   );
-  console.log(response);
-  return response;
-  
 };
 
 export default sendMessage;

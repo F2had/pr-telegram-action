@@ -48,11 +48,10 @@ const formatMessage = (payload: PullRequestEvent): string => {
       message = `🔄 *Pull Request* \\\#${number}
       On [${ownerName}/${repoName}](https://github.com/${ownerName}/${repoName}/pull/${number})
       *Title:* ${prTitle}
-      *By:* [${senderName}](https://github.com/${sender.login})
+      *By:* [${senderName}](https://github.com/${senderName})
       [View Pull Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-      console.log(message);
-
+      console.debug(message);
       return message;
 
     case "review_requested":
@@ -62,19 +61,20 @@ const formatMessage = (payload: PullRequestEvent): string => {
       message = `📝  *Review Request* 
       On \\\#${number} [${ownerName}/${repoName}]\(https://github.com/${ownerName}/${repoName}/pull/${number}\) 
       *Title:* ${prTitle}
-      *By:* [${senderName}](
+      *By:* [${senderName}](https://github.com/${senderName})
       *For:* [${reviewerName}](https://github.com/${reviewerName})
       [View Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-      console.log(message);
+      console.debug(message);
       return message;
     default:
       throw new Error(`Unsupported action: ${action}`);
   }
 };
 
-function escapeMarkdown(text: string): string {
+// Escape markdown characters based on https://core.telegram.org/bots/api#markdownv2-style
+const escapeMarkdown = (text: string): string => {
   return text.replace(/([_*\[\]()~`>#+-=|{}\.!])/g, "\\$1");
-}
+};
 
 run();

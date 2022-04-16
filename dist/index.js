@@ -86,10 +86,10 @@ const formatMessage = (payload) => {
             message = `🔄 *Pull Request* \\\#${number}
       On [${ownerName}/${repoName}](https://github.com/${ownerName}/${repoName}/pull/${number})
       *Title:* ${prTitle}
-      *By:* [${senderName}](https://github.com/${sender.login})
+      *By:* [${senderName}](https://github.com/${senderName})
       [View Pull Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-            console.log(message);
+            console.debug(message);
             return message;
         case "review_requested":
             const { requested_reviewer } = payload;
@@ -98,19 +98,20 @@ const formatMessage = (payload) => {
             message = `📝  *Review Request* 
       On \\\#${number} [${ownerName}/${repoName}]\(https://github.com/${ownerName}/${repoName}/pull/${number}\) 
       *Title:* ${prTitle}
-      *By:* [${senderName}](
+      *By:* [${senderName}](https://github.com/${senderName})
       *For:* [${reviewerName}](https://github.com/${reviewerName})
       [View Request](https://github.com/${ownerName}/${repoName}/pull/${number})
       `;
-            console.log(message);
+            console.debug(message);
             return message;
         default:
             throw new Error(`Unsupported action: ${action}`);
     }
 };
-function escapeMarkdown(text) {
+// Escape markdown characters based on https://core.telegram.org/bots/api#markdownv2-style
+const escapeMarkdown = (text) => {
     return text.replace(/([_*\[\]()~`>#+-=|{}\.!])/g, "\\$1");
-}
+};
 run();
 
 
@@ -121,15 +122,6 @@ run();
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -141,15 +133,13 @@ const axios_1 = __importDefault(__nccwpck_require__(6545));
  * @param message the message to be sent.
  * @param uri telegram api to send request to.
  */
-const sendMessage = (chatId, message, uri) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield axios_1.default.post(uri, {
+const sendMessage = (chatId, message, uri) => {
+    return axios_1.default.post(uri, {
         chat_id: chatId,
         text: message,
         parse_mode: "Markdownv2",
     });
-    console.log(response);
-    return response;
-});
+};
 exports["default"] = sendMessage;
 
 
